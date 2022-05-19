@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<db:config name="Database_Config1" doc:name="Database Config" doc:id="f30aeab8-b368-4d52-a3cb-4658ae377fe3" >
+		<db:my-sql-connection host="localhost" port="3306" user="root" password="Aleena@123" database="db" />
+	</db:config>
+	<flow name="userFlow" doc:id="2ffaf2aa-622e-4ac1-95ab-c5bd96c15066" >
+		<http:listener doc:name="Listener" doc:id="e1824862-51a2-40c1-a32b-57b1f9fbbeb1" config-ref="online-library-api-httpListenerConfig" path="/insert"/>
+		<db:insert doc:name="Insert" doc:id="d1373544-519b-44d9-b43c-45648649ad17" config-ref="Database_Config1">
+			<db:sql ><![CDATA[insert into user (userId ,displayName,firstName,lastName,bio,experience,domain,userType,roles) values (:userId ,:displayName,:firstName,:lastName,:bio,:experience,:domain,:userType,:roles) ]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	userId : payload.userId,
+	displayName : payload.displayName,
+	firstName: payload.firstName,
+	lastName: payload.lastName,
+	bio: payload.bio,
+	experience: payload.experience,
+	domain:payload.domain,
+	userType:payload.userType,
+	roles:payload.roles	
+}]]]></db:input-parameters>
+		</db:insert>
+		<ee:transform doc:name="Transform Message" doc:id="278455c8-2c5c-424b-963e-6ee9dd9c77bd" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"status": 200,
+	"message": "Success"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="userFlow1" doc:id="fc374e64-343b-4f8b-86eb-0962378d8d0a" >
+		<http:listener doc:name="Listener" doc:id="e5eebac8-9bb8-4308-bef1-8beacd8651ac" config-ref="online-library-api-httpListenerConfig" path="/view"/>
+		<db:select doc:name="Select" doc:id="00cd82e7-bd04-41f0-9455-0310882148eb" config-ref="Database_Config1">
+			<db:sql ><![CDATA[select * from user]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="caa41ba3-a45d-41e8-9b1f-5e540e857cb2" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map ( payload01 , indexOfPayload01 ) -> {
+	userId: payload01.userId,
+	displayName : payload01.displayName,
+	firstName : payload01.firstName,
+	lastName: payload01.lastName,
+	bio: payload01.bio,
+	experience : payload01.experience,
+	domain:payload01.domain,
+	userType: payload01.userType,
+	roles: payload01.roles
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

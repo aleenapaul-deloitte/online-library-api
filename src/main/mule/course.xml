@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<db:config name="Database_Config2" doc:name="Database Config" doc:id="77390dd1-33f4-4545-a93e-e37ac429665e" >
+		<db:my-sql-connection host="localhost" port="3306" user="root" password="Aleena@123" database="db" />
+	</db:config>
+	<flow name="courseFlow" doc:id="58c43794-3d44-4f6d-a7ae-fa95a2802f4a" >
+		<http:listener doc:name="Listener" doc:id="54e8c2ec-46ff-440b-901c-ae910cb90105" config-ref="online-library-api-httpListenerConfig" path="/courseadd"/>
+		<db:insert doc:name="Insert" doc:id="43034f08-7f87-41bd-ba36-4b34a069c42e" config-ref="Database_Config2">
+			<db:sql ><![CDATA[insert into course ( courseId, courseName, author, bio, description ,domain , price , direction ,content ) values ( :courseId, :courseName, :author, :bio, :description ,:domain , :price , :direction ,:content ) ]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+ 	courseId: payload.courseId, 
+ 	courseName: payload.courseName, 
+ 	author: payload.author, 
+ 	bio:payload.bio, 
+ 	description: payload.description ,
+ 	domain: payload.domain , 
+ 	price: payload.price , 
+ 	direction: payload.direction ,
+ 	content: payload.content 
+}]]]></db:input-parameters>
+		</db:insert>
+		<ee:transform doc:name="Transform Message" doc:id="9923bc69-1f38-4300-a292-92aa105a77f6" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"status": 200,
+	"message": "Success"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="courseFlow1" doc:id="90e79efe-ea94-4fab-a98a-6562d199af7c" >
+		<http:listener doc:name="Listener" doc:id="883b9e4e-747f-4f07-afd5-4aa4a3c7939e" config-ref="online-library-api-httpListenerConfig" path="/coursedelete"/>
+		<db:delete doc:name="Delete" doc:id="86ec7d93-2547-475b-a46e-eee0461a56b1" config-ref="Database_Config1">
+			<db:sql ><![CDATA[delete from course where courseId = courseId]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	courseId: payload.courseId
+}]]]></db:input-parameters>
+		</db:delete>
+		<ee:transform doc:name="Transform Message" doc:id="d9be6148-ad4d-432e-9273-c80eb2dd62ad" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"status": 200,
+	"message": "Deleted Record"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="courseFlow2" doc:id="508f7219-ecd6-4eee-b702-3ddb4523d7a4" >
+		<http:listener doc:name="Listener" doc:id="0c31fcac-3148-48a4-90c6-d616d0076e03" config-ref="online-library-api-httpListenerConfig" path="/course"/>
+		<db:select doc:name="Select" doc:id="6a20520d-5d43-4718-b5dd-ea0becc9c882" config-ref="Database_Config1">
+			<db:sql ><![CDATA[select * from course where courseId = :courseId]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	courseId : attributes.uriParams.courseId
+}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="ab01c948-1d02-4520-a1b6-55aa5476e327" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

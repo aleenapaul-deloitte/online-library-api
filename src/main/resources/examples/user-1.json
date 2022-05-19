@@ -1,0 +1,24 @@
+[
+{
+"userId" : 1,
+"displayName" : "a",
+"firstName" :"alee",
+"lastName" : "paul",
+"bio" : "abn",
+"experience" :"10",
+"domain" : "IT",
+"userType" : "student",
+"roles" : "yyy"
+},
+{
+"userId" : 3,
+"displayName" : "b",
+"firstName" :"alfge",
+"lastName" : "jjul",
+"bio" : "abn",
+"experience" :"10",
+"domain" : "IT",
+"userType" : "student",
+"roles" : "yyy"
+},
+]

@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="used" format="json">
+      <types:shape format="weave" example="examples/user-1.json"><![CDATA[%dw 2.0
+
+type used = Array<{|  userId: Number {"typeId": "int"},   displayName: String,   firstName: String,   lastName: String,   bio: String,   experience: String,   domain: String,   userType: String,   roles: String|} | Null> {"example": "[{\\\"userId\\\":1,\\\"displayName\\\":\\\"a\\\",\\\"firstName\\\":\\\"alee\\\",\\\"lastName\\\":\\\"paul\\\",\\\"bio\\\":\\\"abn\\\",\\\"experience\\\":\\\"10\\\",\\\"domain\\\":\\\"IT\\\",\\\"userType\\\":\\\"student\\\",\\\"roles\\\":\\\"yyy\\\"},{\\\"userId\\\":3,\\\"displayName\\\":\\\"b\\\",\\\"firstName\\\":\\\"alfge\\\",\\\"lastName\\\":\\\"jjul\\\",\\\"bio\\\":\\\"abn\\\",\\\"experience\\\":\\\"10\\\",\\\"domain\\\":\\\"IT\\\",\\\"userType\\\":\\\"student\\\",\\\"roles\\\":\\\"yyy\\\"},null]"}
+
+]]></types:shape>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#9e259f54-89e9-4d4c-a8c0-d14cafe0091f">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="used"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#caa41ba3-a45d-41e8-9b1f-5e540e857cb2">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="used"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>
